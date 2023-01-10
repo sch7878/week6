@@ -8,6 +8,8 @@ require("dotenv").config();
 
 module.exports = router.use (async(req, res, next) => {
     const {Authorization} = req.cookies;
+
+    console.log(Authorization)
    
     const [authType, authToken] = (Authorization || "").split(" ")
 
@@ -19,7 +21,7 @@ module.exports = router.use (async(req, res, next) => {
     }
   
     try {
-      const {userId} = jwt.verify(authToken, process.env.JWT_KEY );
+      const {userId} = jwt.verify(authToken, process.env.JWT_KEY);
       await Users.findOne({where : {userId}}).then((user) => {
         res.locals.user = user;
        next();

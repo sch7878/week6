@@ -1,81 +1,98 @@
 const PostsRepository = require('../repositories/posts.repository.js');
 
+const error = new Error();
+const success = {};
+
+
 class PostsService {
   postsRepository = new PostsRepository();
 
   findAllPosts = async () => {
-    const allposts = await this.postsRepository.findAllPostsData();
-
-    allposts.sort((a,b) => {
-      return b.createdAt - a.createdAt
-    })
-
     try {
-      return allposts.map(post => {
-      return {
-        postsId : post.postId,
-        nickname : post.nickname,
-        title : post.title,
-        createdAt : post.createdAt,
-        updatedAt : post.updatedAt,
-        likes : post.likes
-        }
-      })
-    } catch (err) {
+      const allposts = await this.postsRepository.findAllPostsData();
 
-      return {errorMessage : "게시글 조회에 실패하였습니다.", status:400};
+      allposts.sort((a,b) => {
+        return b.createdAt - a.createdAt
+      })
+
+      success.status = 200;
+      success.message = {"data" : 
+        allposts.map(post => {
+          return {
+            postsId : post.postId,
+            nickname : post.nickname,
+            title : post.title,
+            createdAt : post.createdAt,
+            updatedAt : post.updatedAt,
+            likes : post.likes
+            }
+        })}
+
+    
+      return success
+
+
+    } catch (error) {
+
+      return error
     }
     
   }
 
   createPost = async (title, content, userId, nickname, likes) => {
-
-    const createPostsData = await this.postsRepository.createPost(title, content, userId, nickname, likes)
-
+      
     try {
+      const createPostsData = await this.postsRepository.createPost(title, content, userId, nickname, likes)
+
       if(!title) {
 
-        return {errorMessage : "제목을 작성해주세요.", status:400};
+        error.status = 412;
+        error.message = {errorMessage : "제목을 작성해주세요."}
+        throw error;        
 
       } else if(!content) {
 
-        return {errorMessage : "내용을 입력해주세요.", status:400};
+        error.status = 412;
+        error.message = {errorMessage : "내용을 입력해주세요."}
+        throw error;    
 
       } else {
+
+        success.status = 200;
+        success. message = {message : "게시글 작성에 성공하였습니다." }
         
-        return {
-          postId: createPostsData.postId,
-          nickname: createPostsData.nickname,
-          title: createPostsData.title,
-          content: createPostsData.content,
-          createdAt: createPostsData.createdAt,
-          updatedAt: createPostsData.updatedAt,
-          likes : createPostsData.likes
-        } 
+        return success;
       }
       
-    } catch (err) {
-      console.log(err)
+    } catch (error) {
+      
 
-      return {errorMessage : "게시글 작성에 실패하였습니다..", status:400};
+      return error;
 
     }
+
+    //에러메세지 status, message
 
     
   }
   
   findOnepost = async (postId) => {
-    const Onepost = await this.postsRepository.findeOnePostData(postId);
 
     try {
+
+    const Onepost = await this.postsRepository.findPostById(postId);
     
       if (!Onepost) {
 
-        return {errorMessage : "게시글이 존재하지 않습니다.", status:400};
+        error.status = 412;
+        error.message = {errorMessage : "게시글이 존재하지 않습니다."};
+        throw error;
 
       } else {
 
-        return {
+        success.status = 200;
+        success.message = { data : {
+
         postId : Onepost.postId,
         userId : Onepost.userId,
         nickname : Onepost.nickname,
@@ -87,9 +104,11 @@ class PostsService {
 
         }
       }
-    } catch (err) {
+        return success
+      } 
+    }catch (error) {
 
-      return {errorMessage : "게시글 조회에 실패하였습니다.", status:400};
+      return error;
 
     }
 
@@ -97,87 +116,93 @@ class PostsService {
   }
   
   updatePost = async (postId, title, content, userId) => {
-    const findPost = await this.postsRepository.findPostById(postId);
-    console.log(findPost)
-  
-    try {
 
+    try {
+    const findPost = await this.postsRepository.findPostById(postId);
+
+    console.log("찾아용" + findPost.userId)
+  
       if(!findPost) {
 
-        return {errorMessage : "게시물이 없습니다.", status: 400};
+        error.status = 412;
+        error.message = {errorMessage : "게시물이 없습니다."};
+        throw error;
 
       } else if(!title) {
 
-        return {errorMessage : "제목을 입력해주세요.", status: 400};
+        error.status = 412;
+        error.message = {errorMessage : "게시물이 없습니다."};
+        throw error;
 
       } else if (!content) {
 
-        return {errorMessage : "내용을 입력해주세요.", status: 400};
+        error.status = 412;
+        error.message = {errorMessage : "내용을 입력해주세요."};
+        throw error;
 
       } else if (userId !== findPost.userId) {
 
-        return {errorMessage : "작성자가 아닙니다.", status: 400};
+        error.status = 412;
+        error.message = {errorMessage : "작성자가 아닙니다."};
+        throw error;
         
       }  else {
 
         await this.postsRepository.updatePost(postId, title, content)
-
+      
         const updatedPost = await this.postsRepository.findPostById(postId);
 
-        return {
+        success.status = 200;
+        success.message = {data :{
           postId : updatedPost.postId,
           nickname : updatedPost.nickname,
           title : updatedPost.title,
           content : updatedPost.content,
           createdAt : updatedPost.createdAt,
           updatedAt : updatedPost.updatedAt
-        }
-      }
-    } catch (err) {
-      console.log(err)
+        }}
 
-      return {errorMessage : "형식이 올바르지 않습니다.", status:400};
+        return success;
+      }
+    } catch (error) {
+
+      return error;
 
     }
   }
   
   deletePostService = async (postId, userId) => {
-    const findPost = await this.postsRepository.findPostById(postId);
 
     try {
+      const findPost = await this.postsRepository.findPostById(postId);
 
       if (!findPost) {
-        console.log("1111")
 
-        return {errorMessage : "게시물이 없습니다.", status: 400};
+        error.status = 404;
+        error.message = {errorMessage : "게시물이 없습니다."};
+        throw error;
 
       }
       if (userId !== findPost.userId) {
 
-        console.log("2222")
-
-        return {errorMessage : "작성자가 아닙니다.", status: 400};
+        error.status = 412;
+        error.message = {errorMessage : "작성자가 아닙니다."};
+        throw error;
         
       }  else {
-
+        
         await this.postsRepository.deletePostData(postId);
+        
+        success.status = 200;
+        success.message = {"message" : "게시글을 삭제하였습니다."}
 
-        return {
-          postId : findPost.postId,
-          nickname : findPost.nickname,
-          title : findPost.title,
-          content : findPost.content,
-          createdAt : findPost.createdAt,
-          updatedAt : findPost.updatedAt
-        };
+        return success;
 
       }
 
-    } catch (err) {
-
-      console.log(err)
+    } catch (error) {
       
-      return {errorMessage : "요청한 데이터의 형식이 올바르지 않습니다.", status : 400};
+      return error;
     }
 
   }

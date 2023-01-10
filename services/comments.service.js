@@ -1,97 +1,109 @@
 const CommentsRepository = require('../repositories/comments.repository.js')
 
+const error = new Error();
+error.status = 400;
+const success = {};
+
 class CommentsService {
   commentsRepository = new CommentsRepository()
 
   createComments = async (userId, postId, nickname, comment) => {
-    
-    console.log("dhdP"+userId)
 
-    const createCommentsData = await this.commentsRepository.createComments(userId, postId, nickname, comment);
-
-    console.log("dhdP"+userId + createCommentsData.userId)
-
-    
     try {
+      const createCommentsData = await this.commentsRepository.createComments(userId, postId, nickname, comment);
+
       if (!createCommentsData) {
 
-        return {errorMessage : "댓글을 작성해주세요.", status: 400};
-
+        error.status = 412;
+        error.message = {errorMessage : "댓글을 작성해주세요."}
+        throw error;
+       
       }
       if(userId !== createCommentsData.userId) {
 
-        return {errorMessage : "작성자가 아닙니다.", status: 400};
+        error.status = 412;
+        error.message = {errorMessage : "작성자가 아닙니다."}
+        throw error;
 
       } else {
         
-        return {
-          commentId : createCommentsData.commentId,
-          userId : createCommentsData.userId,
-          nickname : createCommentsData.nickname,
-          comment : createCommentsData.comment,
-          createdAt : createCommentsData.createdAt,
-          updatedAt : createCommentsData.updatedAt
-        };
+        success.status = 200;
+        success.message = {message : "댓글 작성에 성공했습니다."}
+
+        return success
       }
-    } catch (err) {
-      console.log(err);
-      return {errorMessage : "요청한 데이터의 형식이 올바르지 않습니다.", status : 400};
+    } catch (error) {
+      
+      return error || {erroeMessage : "에러가 발생했습니다.", statuse : 400};
 
     }
     
   }
   findAllComments = async (postId) => {
-    const allComments = await this.commentsRepository.findAllComments(postId);
-
-    allComments.sort((a,b) => {
-      return b.createdAt - a.createdAt
-    })
 
     try {
+      const allComments = await this.commentsRepository.findAllComments(postId);
+
+      allComments.sort((a,b) => {
+          return b.createdAt - a.createdAt
+      })
+
       if(!allComments) {
 
-        return {errorMessage : "댓글이 존재하지 않습니다.", status:400};
+        error.status = 412;
+        error.message = {errorMessage : "댓글이 존재하지 않습니다."}
+        throw error;
      
       } else {
 
-        return allComments.map(comment => {
-        return {
-          commentId : allComments.commentId,
-          nickname : allComments.nickname,
-          comment : allComments.comment,
-          createdAt : allComments.createdAt,
-          updatedAt : allComments.updatedAt
-        }
-      });
+        success.status = 200;
+        success.message = {data : 
+        allComments.map(comment => {
+          return {
+            commentId : comment.commentId,
+            nickname : comment.nickname,
+            comment : comment.comment,
+            createdAt : comment.createdAt,
+            updatedAt : comment.updatedAt
+          }
+        })
+        };
+        return success;
+        
 
       }
       
-    } catch (err) {
+    } catch (error) {
 
-      return {errorMessage : "댓글 조회에 실패하였습니다.", status:400}
+      return error || {erroeMessage : "에러가 발생했습니다.", status :400 }
     }
   }
   
   
   updateComments = async (userId, commentId, comment) => {
 
-    const findComment = await this.commentsRepository.findCommentById(commentId);
-
-
     try {
+      const findComment = await this.commentsRepository.findCommentById(commentId);
 
       if(!findComment) {
 
-        return {errorMessage : "댓글이 없습니다.", status: 400};
+        error.status = 404;
+        error.message = {errorMessage : "댓글이 없습니다."}
+        throw error;
+
       } 
 
       if(userId !== findComment.userId) {
 
-        return {errorMessage : "작성자가 아닙니다.", status: 400};
+        error.status = 404;
+        error.message = {errorMessage : "작성자가 아닙니다."}
+        throw error;
 
       } else if (!comment) {
 
-        return {errorMessage : "댓글을 입력해주세요.", status: 400};
+        error.status = 404;
+        error.message = {errorMessage : "댓글을 입력해주세요."}
+        throw error;
 
       }
 
@@ -101,47 +113,53 @@ class CommentsService {
 
         const updateComment = await this.commentsRepository.findCommentById(commentId);
 
-        return {
+        success.status = 200;
+        success.message = {"data" : {
           commentId : updateComment.commentId,
           userId : updateComment.userId,
           nickname : updateComment.nickname,
           comment : updateComment.comment,
           createdAt : updateComment.createdAt,
           updatedAt : updateComment.updatedAt
-        }
+        }};
+
+        return success;
         
       }
-    } catch (err) {
-      console.log(err)
-
-      return {errorMessage : "형식이 올바르지 않습니다.", status:400};
+    } catch (error) {
+      return error
 
     }
   }
   deleteComments =async (commentId, userId) => {
  
-    const findComment = await this.commentsRepository.findCommentById(commentId);
-   
-    
     try {
+      const findComment = await this.commentsRepository.findCommentById(commentId);
+      
       if(userId !== findComment.userId) {
 
-        return {errorMessage : "작성자가 아닙니다.", status: 400};
+        error.status = 412;
+        error.message = {errorMessage : "작성자가 아닙니다."}
+        throw error;
 
       } else if (!findComment) {
 
-        return {errorMessage : "댓글이 없습니다.", status: 400};
+        error.status = 404;
+        error.message = {errorMessage : "댓글이 없습니다."}
+        throw error;
+        
       } else {
 
         await this.commentsRepository.deleteComments(commentId);
 
+        success.status = 200;
+        success.message = {message : "댓글이 삭제 되었습니다."}
 
-        return {message : "댓글이 삭제 되었습니다."};
+        return success;
       }
-    } catch (err) {
-      console.log(err)
-
-      return {errorMessage : "요청한 데이터의 형식이 올바르지 않습니다.", status : 400};
+    } catch (error) {
+      
+      return error;
       
     }
   }

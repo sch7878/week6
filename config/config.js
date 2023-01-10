@@ -9,7 +9,7 @@ module.exports =
     "database": process.env.config_DATABASE,
     "host": process.env.config_HOST,
     "dialect": "mysql",
-    "timezone" : "+09:00"
+    "timezone" : "Asia/Seoul"
     },
 
   

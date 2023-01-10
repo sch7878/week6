@@ -17,7 +17,7 @@ class PostsRepository {
     return findOnePost;
   }
 
-  findeOnePostData = async (postId) => {
+  findOnePostData = async (postId) => {
   
     const findOnePost = await Posts.findByPk(postId);
 
@@ -40,8 +40,9 @@ class PostsRepository {
   }
 
   deletePostData = async (postId) => {
+
     const deletePost = await Posts.destroy(
-      {where: {postId}}
+      {where : {postId}}
     )
 
     return deletePost;

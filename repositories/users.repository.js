@@ -2,6 +2,15 @@ const {Users} = require('../models')
 
 class UsersRepository {
 
+  findNickname = async (nickname) => {
+    const extist = await Users.findOne({
+      where : {nickname}
+    });
+
+    return extist
+    
+  }
+
   createUser = async (nickname, hashedPassword) => {
     const password = hashedPassword;
 

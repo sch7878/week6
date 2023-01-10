@@ -1,6 +1,12 @@
 const {Likes, Posts} = require('../models');
 
 class LikesRepository {
+
+  findpostById = async(postId) => {
+    const post = await Posts.findAll({postId});
+    
+    return post;
+  }
   
   findpost = async(userId, postId) => {
 
@@ -19,27 +25,58 @@ class LikesRepository {
     return {setLikes : true};
   }
 
-  upLikes = async (postId) => {
+  upPostsLikes = async (postId) => {
     const post = await Posts.findOne({where : {postId}})
     const plus = await Posts.update(
-      {lieks : post.likes +1},
+      {likes : post.likes +1},
       {where: {postId}})
     return plus; 
   }
+
+  upLikes = async (postId) => {
+    const like = await Likes.findAll({where : {postId}})
+    const plus = await Likes.update(
+      {likes : like.likes +1},
+      {where : {postId}}
+      )
+    return plus;
+  };
+
   deleteLikes = async (userId, postId) => {
     const delLikes = await Likes.destroy({where : {userId, postId}});
 
     return {delLikes : true};
   }
   
-  downLikes = async (postId) => {
+  downPostsLikes = async (postId) => {
     const post = await Posts.findOne({where : {postId}})
     const minus = await Posts.update(
-      {lieks : post.likes -1},
+      {likes : post.likes -1},
       {where: {postId}})
     return minus
   }
 
+  downLikes = async (postId) => {
+    const like = await Likes.findAll({where : {postId}})
+    const minus = await Likes.update(
+      {likes : like.likes -1},
+      {where : {postId}}
+      )
+    return minus;
+  };
+
+  getAllLikes = async (userId) => {
+    const likes = await Likes.findAll ({
+        where : {userId},
+    },
+      
+      {order: [['createdAt', 'desc']]}
+      )
+
+    return likes;
+  }
+
 }
+
 
 module.exports = LikesRepository
