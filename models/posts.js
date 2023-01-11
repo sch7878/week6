@@ -25,6 +25,11 @@ module.exports = (sequelize, DataTypes) => {
         targetKey: 'postId', // 3. Users 모델의 postId 컬럼을
         foreignKey: 'postId', // 4. Likes 모델의 postId 컬럼과 연결합니다.
       });
+
+      // this.belongsTo(models.Likes, { // 2. Likes 모델에게 1:1 관계 설정을 합니다.
+      //   targetKey: 'postId', // 3. Users 모델의 postId 컬럼을
+      //   foreignKey: 'postId', // 4. Likes 모델의 postId 컬럼과 연결합니다.
+      // });
     }
   }
 

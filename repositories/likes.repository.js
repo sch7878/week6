@@ -18,9 +18,8 @@ class LikesRepository {
 
   
   createLike = async (userId, postId, nickname) => {
-    const likes = 1;
     const title = await Posts.findOne({where : {postId}})
-    const setLikes = await Likes.create({postId, userId, nickname, title:title.title, likes})
+    const setLikes = await Likes.create({postId, userId, nickname, title:title.title})
   
     return {setLikes : true};
   }
@@ -67,11 +66,15 @@ class LikesRepository {
 
   getAllLikes = async (userId) => {
     const likes = await Likes.findAll ({
-        where : {userId},
+      where : {userId},
+      include : [{model:Posts, attributes:['likes']}],
+       
     },
       
       {order: [['createdAt', 'desc']]}
       )
+
+
 
     return likes;
   }

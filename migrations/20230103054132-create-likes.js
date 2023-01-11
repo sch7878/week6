@@ -30,10 +30,6 @@ module.exports = {
         allowNull: false, // NOT NULL
         type: Sequelize.STRING,
       },
-      likes: {
-        allowNull: false, // NOT NULL
-        type: Sequelize.INTEGER
-      },
     });
   },
   async down(queryInterface, Sequelize) {

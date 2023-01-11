@@ -69,6 +69,7 @@ class LikesService {
         throw error;
       } else {
 
+
         success.status = 200;
         success.message = { "data" :
           likes.map(like => {
@@ -78,7 +79,7 @@ class LikesService {
               title : like.title,
               createdAt : like.createdAt,
               updatedAt : like.updatedAt,
-              likes : like.likes
+              likes : like.Post.likes
               }
           })
         }
