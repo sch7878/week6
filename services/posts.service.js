@@ -153,14 +153,7 @@ class PostsService {
         const updatedPost = await this.postsRepository.findPostById(postId);
 
         success.status = 200;
-        success.message = {data :{
-          postId : updatedPost.postId,
-          nickname : updatedPost.nickname,
-          title : updatedPost.title,
-          content : updatedPost.content,
-          createdAt : updatedPost.createdAt,
-          updatedAt : updatedPost.updatedAt
-        }}
+        success.message = {message : "게시글 수정이 완료되었습니다."}
 
         return success;
       }

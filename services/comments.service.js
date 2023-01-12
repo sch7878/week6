@@ -114,14 +114,7 @@ class CommentsService {
         const updateComment = await this.commentsRepository.findCommentById(commentId);
 
         success.status = 200;
-        success.message = {"data" : {
-          commentId : updateComment.commentId,
-          userId : updateComment.userId,
-          nickname : updateComment.nickname,
-          comment : updateComment.comment,
-          createdAt : updateComment.createdAt,
-          updatedAt : updateComment.updatedAt
-        }};
+        success.message = {"message" : "댓글 수정이 완료 되었습니다."};
 
         return success;
         
