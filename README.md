@@ -3,6 +3,8 @@
 
 **과제목표**
 
+!! 기존 프로젝트를 Layerd Architecture로 변경하여 작성하기 !!
+
 1.. 프로젝트 ERD 작성
 
 2.. Mongo DB로 연결되어 있던 과제를 MySQL로 변경
