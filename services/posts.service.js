@@ -42,22 +42,23 @@ class PostsService {
   createPost = async (title, content, userId, nickname, likes) => {
       
     try {
-      const createPostsData = await this.postsRepository.createPost(title, content, userId, nickname, likes)
-
+      
       if(!title) {
-
+        
         error.status = 412;
         error.message = {errorMessage : "제목을 작성해주세요."}
         throw error;        
-
+        
       } else if(!content) {
-
+        
         error.status = 412;
         error.message = {errorMessage : "내용을 입력해주세요."}
         throw error;    
-
+        
       } else {
 
+        await this.postsRepository.createPost(title, content, userId, nickname, likes)
+        
         success.status = 200;
         success. message = {message : "게시글 작성에 성공하였습니다." }
         
@@ -70,8 +71,6 @@ class PostsService {
       return error;
 
     }
-
-    //에러메세지 status, message
 
     
   }
@@ -183,7 +182,7 @@ class PostsService {
         throw error;
         
       }  else {
-        
+        //TODO :뭐지 
         await this.postsRepository.deletePostData(postId);
         
         success.status = 200;

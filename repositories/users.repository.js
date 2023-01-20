@@ -14,23 +14,26 @@ class UsersRepository {
   createUser = async (nickname, hashedPassword) => {
     const password = hashedPassword;
 
-    const createUserData = await Users.create({nickname, password});
+    try {
 
-    return createUserData
+      await Users.create({nickname, password});
+
+      return;
+
+    } catch (error) {
+
+      return error;
+    }
+
+
   }
 
   findUser = async (nickname, password) => {
 
-    try {
       const findUserData = await Users.findOne({
       where : {nickname}});
 
       return findUserData
-
-    } catch (err) {
-      console.log(err)
-    }
-
   
   }
 }

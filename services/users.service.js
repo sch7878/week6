@@ -66,8 +66,8 @@ class UsersService {
       
 
       } else {
-        const createUserData = await this.usersRepository.createUser(nickname, hashedPassword);
-
+        await this.usersRepository.createUser(nickname, hashedPassword);
+        
         success.message = {message : "회원가입이 완료되었습니다."};
         success.status = 200;
         return success

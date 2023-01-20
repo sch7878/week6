@@ -24,6 +24,7 @@ module.exports = router.use (async(req, res, next) => {
       const {userId} = jwt.verify(authToken, process.env.JWT_KEY);
       await Users.findOne({where : {userId}}).then((user) => {
         res.locals.user = user;
+        console.log(user)
        next();
       });
     } catch (err) {

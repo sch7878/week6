@@ -8,21 +8,14 @@ class PostsRepository {
     const findAllPosts = await Posts.findAll()
 
     return findAllPosts;
-  }
+  };
 
   findPostById = async (postId) => {
 
     const findOnePost = await Posts.findByPk(postId);
 
     return findOnePost;
-  }
-
-  findOnePostData = async (postId) => {
-  
-    const findOnePost = await Posts.findByPk(postId);
-
-    return findOnePost;
-}
+  };
 
   createPost = async(title, content, userId, nickname, likes) => {
     const createPostData = await Posts.create({title, content, userId, nickname, likes})
