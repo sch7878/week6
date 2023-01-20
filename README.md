@@ -1,7 +1,9 @@
-# week5
+# week6
 항해99 node.js 주특기 숙련주차 과제
 
 **과제목표**
+
+!! 기존 프로젝트를 Layerd Architecture로 변경하여 작성하기 !!
 
 1.. 프로젝트 ERD 작성
 
